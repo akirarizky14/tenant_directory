@@ -1,8 +1,8 @@
-const UnitModel = require('../models/unit.models');
+const { TenantModels,UnitModels } = require('../models');
 
-const getUnits = (req,res)=>{
+const getUnits = async (req,res)=>{
     try {
-        const data = UnitModel.findAll();
+        const data = await UnitModels.findAll({include: {model:TenantModels, as :'tenant'}});
         res.json(data);
     } catch (error) {
         res.status(500).json({message: error.message});

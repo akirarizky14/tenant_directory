@@ -1,0 +1,1 @@
+const TenantModels = require('../models');

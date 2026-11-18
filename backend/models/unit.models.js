@@ -1,7 +1,7 @@
 const {DataTypes, UUIDV4} = require('sequelize');
-const sequelize = require('../config/database');
+const db = require('../config/database');
 
-const Unit = sequelize.define('Unit',{
+const Unit = db.define('Unit',{
     unit_id : {
         type : DataTypes.UUID,
         defaultValue : DataTypes.UUIDV4,
@@ -14,7 +14,8 @@ const Unit = sequelize.define('Unit',{
     },
     nomor : {
         type : DataTypes.STRING,
-        allowNull : false
+        allowNull : false,
+        unique : true
     },
     luas_m2 : {
         type : DataTypes.DOUBLE,
