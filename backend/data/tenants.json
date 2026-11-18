@@ -1,0 +1,6 @@
+[
+  { "tenant_id": 1, "nama": "Kopi Senja", "kategori": "F&B", "unit_id": 1 },
+  { "tenant_id": 2, "nama": "Fashion Corner", "kategori": "Fashion", "unit_id": 4 },
+  { "tenant_id": 3, "nama": "Gadget Hub", "kategori": "Elektronik", "unit_id": null },
+  { "tenant_id": 4, "nama": "Pijat Sehat", "kategori": "Jasa", "unit_id": null }
+]

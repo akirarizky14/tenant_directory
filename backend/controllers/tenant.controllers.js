@@ -11,13 +11,14 @@ const getTenants = async (req,res) => {
         if (kategori) {
             where.kategori = kategori;
         }
-        const include = {...includeUnit};
+        const include = { model: UnitModels, as: 'unit', attributes: ['unit_id', 'lantai', 'nomor'] };
         if (lantai) include.where = {lantai};
 
         const tenants = await TenantModels.findAll({where, include, order: [['nama', 'ASC']]})
         res.status(200).json(tenants);
     } catch (error) {
-        res.status(500).json("Gagal mendapatkan Tenants");
+        console.log(error)
+        res.status(500).json({ message: 'Gagal mendapatkan tenant' });
     }
 }
 
@@ -34,9 +35,9 @@ const createTenant = async(req,res) =>{
             return res.status(409).json({message : 'Nama Tenant sudah dipakai'});
         }
         if (error.name === 'SequelizeValidationError'){
-            return res.status(422).json({message : error.erros[0].message});
+            return res.status(422).json({ message: error.errors[0].message });
         }
-        res.status(500).json("Gagal membuat Tenant");
+        res.status(500).json({ message: 'Gagal membuat tenant' });
     }
 }
 
@@ -57,9 +58,9 @@ const editTenant = async(req,res) =>{
             return res.status(409).json({message : 'Nama Tenant sudah dipakai'});
         }
         if (error.name === 'SequelizeValidationError'){
-            return res.status(422).json({message : error.erros[0].message});
+            return res.status(422).json({ message: error.errors[0].message });
         }
-        res.status(500).json("Gagal membuat Tenant");
+        res.status(500).json({ message: 'Gagal mengubah tenant' });
     }
 }
 
@@ -70,15 +71,15 @@ const deleteTenant = async (req,res) =>{
             return res.status(404).json({message : 'Tenant tidak ditemukan'});
         }
         await tenant.destroy();
-        res.status(200).json(`Tenant ${tenant} berhasil dihapus`);
+        res.status(200).json({ message: `Tenant ${tenant.nama} berhasil dihapus` });
     } catch (error) {
-        res.status(500).json({message : error.message});
+        res.status(500).json({ message: error.message });
     }
 }
 
 const assignUnit = async (req,res) => {
     try {
-        const {id} = req.params;
+        const { unit_id } = req.body;
         const tenant = await TenantModels.findByPk(req.params.id);
 
         if (!tenant) {
@@ -95,16 +96,16 @@ const assignUnit = async (req,res) => {
             return res.status(404).json({message : 'Unit tidak ditemukan'});
         }
 
-        if(tenant.unit_id === unit.id){
+        if(tenant.unit_id === unit.unit_id){
             return res.status(200).json(tenant);
         }
 
-        const penghuni = await TenantModels.findOne({where : {unit_id:unit.id}})
+        const penghuni = await TenantModels.findOne({where : {unit_id:unit.unit_id}})
         if (penghuni) {
-            return res.status(409).json({message: `Unit ${unit.nomor} sudah dihubungi ${penghuni.nama}`});
+            return res.status(409).json({ message: `Unit ${unit.nomor} sudah dihuni ${penghuni.nama}` });
         }
 
-        await tenant.update({unit_id : unit.id});
+        await tenant.update({unit_id : unit.unit_id});
         res.status(200).json(tenant);
     } catch (error) {
         res.status(500).json({message: error.message});
