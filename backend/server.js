@@ -4,14 +4,11 @@ const app = express()
 const cors = require('cors');
 const port = process.env.PORT;
 const db = require('./config/database');
-const unitRouters = require('./routers/unit.routers');
+const routers = require('./routers/index');
 
 app.use(cors());  
 app.use(express.json());
-app.use('/api',unitRouters);
-
-
-
+app.use('/api',routers);
 
 async function start(){
   try {
