@@ -1,0 +1,10 @@
+[
+  { "nomor": "GF-01", "lantai": "GF", "luas_m2": 45 },
+  { "nomor": "GF-02", "lantai": "GF", "luas_m2": 60 },
+  { "nomor": "GF-03", "lantai": "GF", "luas_m2": 30 },
+  { "nomor": "L1-01", "lantai": "L1", "luas_m2": 80 },
+  { "nomor": "L1-02", "lantai": "L1", "luas_m2": 55 },
+  { "nomor": "L1-03", "lantai": "L1", "luas_m2": 120 },
+  { "nomor": "L2-01", "lantai": "L2", "luas_m2": 70 },
+  { "nomor": "L2-02", "lantai": "L2", "luas_m2": 90 }
+]

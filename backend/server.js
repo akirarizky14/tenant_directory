@@ -6,7 +6,7 @@ const db = require('./config/database');
 const unitRouters = require('./routers/unit.routers');
 
 app.use(express.json());
-app.use('api',unitRouters);
+app.use('/api',unitRouters);
 
 async function start(){
   try {

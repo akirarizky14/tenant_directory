@@ -9,4 +9,6 @@ const getUnits = (req,res)=>{
     }
 }
 
-module.exports = {getUnits}
+module.exports = {
+    getUnits,
+}
