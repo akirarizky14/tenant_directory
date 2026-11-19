@@ -18,6 +18,8 @@ function App() {
   );
   const [total,setTotal] = useState(0);
   const [modal, setModal] = useState({ open: false, mode: 'tambah', tenant: null });
+  const [sort, setSort] = useState({field: 'nama', order: 'asc'});
+
   const limit = 5;
   const getTenants = async () => {
     setLoading(true);
@@ -29,6 +31,8 @@ function App() {
 
       params.append('page',page);
       params.append('limit',limit);
+      params.append('sort',sort.field);
+      params.append('order',sort.order);
 
       const res = await request(`/tenants?${params}`);
       if (res.data.length === 0 && page > 1){
@@ -59,7 +63,7 @@ function App() {
 
   useEffect(() => {
     getTenants();
-  }, [filter,page,limit]);
+  }, [filter,page,sort]);
 
   useEffect(() => {
     const url = new URL(window.location);
@@ -91,10 +95,17 @@ function App() {
     setPage(1);
   };
 
-  const handlePageChange = (newPage,newLimit) =>{
+  const handlePageChange = (newPage) =>{
     setPage(newPage);
   }
-
+  const handleSortChange = (field, order) => {
+    if (!order) {
+      setSort({ field: 'nama', order: 'asc' });
+    } else {
+      setSort({ field, order: order === 'ascend' ? 'asc' : 'desc' });
+    }
+    setPage(1);
+  };
   const openModal = (mode, tenant = null) => {
     setModal({ open: true, mode, tenant });
   };
@@ -164,6 +175,8 @@ function App() {
             onPageChange={handlePageChange}
             loading={loading}
             busy={busy}
+            sort={sort}
+            onSortChange={handleSortChange}
             onEdit={(tenant) => openModal('ubah', tenant)}
             onDelete={(tenant) => openModal('hapus', tenant)}
             onAssign={handleAssign}
