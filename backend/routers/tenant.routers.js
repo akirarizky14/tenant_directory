@@ -1,7 +1,13 @@
 const express = require('express');
 const router = express.Router();
 
-const {getTenants,createTenant,editTenant,deleteTenant,assignUnit} = require('../controllers/tenant.controllers');
+const {
+  getTenants,
+  createTenant,
+  editTenant,
+  deleteTenant,
+  assignUnit,
+} = require('../controllers/tenant.controllers');
 
 router.get('/tenants', getTenants);
 router.post('/tenants', createTenant);

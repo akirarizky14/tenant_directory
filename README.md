@@ -17,3 +17,8 @@ pake kode ini diatas kode await db.authenticate(); agar dapat otomatis membuat d
     const tmp = new Sequelize('',db.config.username,db.config.password,db.options);
     await tmp.getQueryInterface().createDatabase(db.config.database);
     await tmp.close();
+
+
+
+Note : 
+Saya menggunakan ID menggunakan Nama Table_ID agar dapat lebih gampang dipahami.
