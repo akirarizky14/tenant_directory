@@ -4,6 +4,12 @@ const { TenantModels, UnitModels } = require('../models');
 const getTenants = async (req, res) => {
   try {
     const { q, kategori, lantai } = req.query;
+    const page = req.query.page ? Number(req.query.page) : 1;
+    const limit = req.query.limit ? Number(req.query.limit) : 10;
+
+    if (!Number.isInteger(page) || page < 1 || !Number.isInteger(limit) || limit < 1){
+        return res.status(422).json({message : 'page dan limit harus diatas 0 dan angka bulat'})
+    }
     const where = {};
     if (q) {
       where.nama = { [Op.like]: `%${q}%` };
@@ -18,14 +24,23 @@ const getTenants = async (req, res) => {
     };
     if (lantai) include.where = { lantai };
 
-    const tenants = await TenantModels.findAll({
+    const {count,rows} = await TenantModels.findAndCountAll({
       where,
       include,
       order: [['nama', 'ASC']],
+      limit,
+      offset: (page -1) * limit,
     });
-    res.status(200).json(tenants);
+    res.status(200).json(
+        {
+            data: rows,
+            total : count,
+            page,
+            limit,
+            totalPages: Math.ceil(count/limit)
+        }
+    );
   } catch (error) {
-    console.log(error);
     res.status(500).json({ message: 'Gagal mendapatkan tenant' });
   }
 };
