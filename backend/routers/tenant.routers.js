@@ -9,10 +9,10 @@ const {
   assignUnit,
 } = require('../controllers/tenant.controllers');
 
-router.get('/tenants', getTenants);
-router.post('/tenants', createTenant);
-router.put('/tenants/:id', editTenant);
-router.delete('/tenants/:id', deleteTenant);
-router.put('/tenants/:id/unit', assignUnit);
+router.get('/', getTenants);
+router.post('/', createTenant);
+router.put('/:id', editTenant);
+router.delete('/:id', deleteTenant);
+router.put('/:id/unit', assignUnit);
 
 module.exports = router;

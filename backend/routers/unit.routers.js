@@ -1,8 +1,10 @@
 const express = require('express');
 const router = express.Router();
 
-const { getUnits } = require('../controllers/unit.controllers');
+const { 
+    getUnits 
+} = require('../controllers/unit.controllers');
 
-router.get('/units', getUnits);
+router.get('/', getUnits);
 
 module.exports = router;
