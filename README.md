@@ -63,7 +63,7 @@
 
 ## Notes
 
-# Supaya database dibuat otomatis kalau belum ada, tambahkan kode berikut **di atas** `await db.authenticate();`:
+### Supaya database dibuat otomatis kalau belum ada, tambahkan kode berikut **di atas** `await db.authenticate();`:
 
 ```js
 const tmp = new Sequelize('', db.config.username, db.config.password, db.options);
@@ -71,4 +71,4 @@ await tmp.getQueryInterface().createDatabase(db.config.database);
 await tmp.close();
 ```
 
-# Saya menggunakan ID menggunakan Nama Table_ID agar dapat lebih gampang dipahami.
+### Saya menggunakan ID menggunakan Nama Table_ID agar dapat lebih gampang dipahami.
