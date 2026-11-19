@@ -1,4 +1,4 @@
-const { Op } = require('sequelize');
+const { Op, literal } = require('sequelize');
 const { TenantModels, UnitModels } = require('../models');
 
 const getTenants = async (req, res) => {
@@ -6,9 +6,17 @@ const getTenants = async (req, res) => {
     const { q, kategori, lantai } = req.query;
     const page = req.query.page ? Number(req.query.page) : 1;
     const limit = req.query.limit ? Number(req.query.limit) : 10;
+    const sort = req.query.sort || 'nama';
+    const order = req.query.order || 'asc';
 
     if (!Number.isInteger(page) || page < 1 || !Number.isInteger(limit) || limit < 1){
         return res.status(422).json({message : 'page dan limit harus diatas 0 dan angka bulat'})
+    }
+    if (sort !== 'nama' && sort !== 'lantai') {
+        return res.status(422).json({ message: 'sort harus nama atau lantai' });
+    }
+    if (order !== 'asc' && order !== 'desc') {
+        return res.status(422).json({ message: 'order harus asc atau desc' });
     }
     const where = {};
     if (q) {
@@ -23,11 +31,18 @@ const getTenants = async (req, res) => {
       attributes: ['unit_id', 'lantai', 'nomor'],
     };
     if (lantai) include.where = { lantai };
-
+    let urutan = [['nama', order]];
+    if (sort === 'lantai') {
+    urutan = [
+        [literal('`unit`.`lantai` IS NULL'), 'ASC'],
+        [{ model: UnitModels, as: 'unit' }, 'lantai', order],
+        ['nama', 'asc'],
+    ];
+    }
     const {count,rows} = await TenantModels.findAndCountAll({
       where,
       include,
-      order: [['nama', 'ASC']],
+      order: urutan,
       limit,
       offset: (page -1) * limit,
     });
