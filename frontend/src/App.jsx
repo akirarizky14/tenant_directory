@@ -13,9 +13,12 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [filter, setFilter] = useState({ q: '', kategori: undefined, lantai: undefined });
-
+  const [page, setPage] = useState(
+    () => Number(new URLSearchParams(window.location.search).get('page')) || 1
+  );
+  const [total,setTotal] = useState(0);
   const [modal, setModal] = useState({ open: false, mode: 'tambah', tenant: null });
-
+  const limit = 5;
   const getTenants = async () => {
     setLoading(true);
     try {
@@ -24,8 +27,16 @@ function App() {
       if (filter.kategori) params.append('kategori', filter.kategori);
       if (filter.lantai) params.append('lantai', filter.lantai);
 
-      const data = await request(`/tenants?${params}`);
-      setTenants(data);
+      params.append('page',page);
+      params.append('limit',limit);
+
+      const res = await request(`/tenants?${params}`);
+      if (res.data.length === 0 && page > 1){
+        setPage(Math.max(res.totalPages, 1));
+        return;
+      }
+      setTenants(res.data);
+      setTotal(res.total)
     } catch (err) {
       messageApi.error(err.message);
     } finally {
@@ -48,7 +59,13 @@ function App() {
 
   useEffect(() => {
     getTenants();
-  }, [filter]);
+  }, [filter,page,limit]);
+
+  useEffect(() => {
+    const url = new URL(window.location);
+    url.searchParams.set('page', page);
+    window.history.replaceState(null, '', url);
+  }, [page]);
 
   const kirim = async (path, method, body, pesanSukses) => {
     setBusy(true);
@@ -71,7 +88,12 @@ function App() {
 
   const handleFilterChange = (name, value) => {
     setFilter({ ...filter, [name]: value });
+    setPage(1);
   };
+
+  const handlePageChange = (newPage,newLimit) =>{
+    setPage(newPage);
+  }
 
   const openModal = (mode, tenant = null) => {
     setModal({ open: true, mode, tenant });
@@ -121,27 +143,31 @@ function App() {
         <Card
           title="Daftar Tenant"
           extra={
-            <Button type="primary" onClick={() => openModal('tambah')} disabled={busy}>
-              Tambah Tenant
-            </Button>
+            <Space>
+              <TenantFilter
+                filter={filter}
+                daftarLantai={daftarLantai}
+                onChange={handleFilterChange}
+              />
+              <Button type="primary" onClick={() => openModal('tambah')} disabled={busy}>
+                Tambah Tenant
+              </Button>
+            </Space>
           }
         >
-          <Space orientation="vertical" size="middle" style={{ width: '100%' }}>
-            <TenantFilter
-              filter={filter}
-              daftarLantai={daftarLantai}
-              onChange={handleFilterChange}
-            />
-            <TenantTable
-              tenants={tenants}
-              units={units}
-              loading={loading}
-              busy={busy}
-              onEdit={(tenant) => openModal('ubah', tenant)}
-              onDelete={(tenant) => openModal('hapus', tenant)}
-              onAssign={handleAssign}
-            />
-          </Space>
+          <TenantTable
+            tenants={tenants}
+            units={units}
+            page={page}
+            limit={limit}
+            total={total}
+            onPageChange={handlePageChange}
+            loading={loading}
+            busy={busy}
+            onEdit={(tenant) => openModal('ubah', tenant)}
+            onDelete={(tenant) => openModal('hapus', tenant)}
+            onAssign={handleAssign}
+          />
         </Card>
       </Space>
 

@@ -1,7 +1,7 @@
 import { Button, Space, Table } from 'antd';
 import UnitSelect from './UnitSelect';
 
-function TenantTable({ tenants, units, loading, busy, onEdit, onDelete, onAssign }) {
+function TenantTable({ tenants, units, page,limit,total,loading, busy, onEdit, onDelete, onAssign,onPageChange }) {
   const columns = [
     { title: 'Nama', dataIndex: 'nama' },
     { title: 'Kategori', dataIndex: 'kategori' },
@@ -28,7 +28,13 @@ function TenantTable({ tenants, units, loading, busy, onEdit, onDelete, onAssign
       columns={columns}
       dataSource={tenants}
       loading={loading}
-      pagination={false}
+      pagination={{ 
+        current : page,
+        pageSize : limit,
+        total,
+        showTotal: (jumlah) =>`Total ${jumlah} tenant`,
+        onChange: onPageChange
+       }}
       locale={{ emptyText: 'Tidak ada tenant' }}
     />
   );
